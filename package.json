@@ -1,6 +1,6 @@
 {
     "name": "profitlich-template-toolkit",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "Shared SCSS layout system, JS utilities and components for profitlich template repos",
     "type": "module",
     "exports": {
@@ -22,6 +22,9 @@
         "utils/",
         "components/"
     ],
+    "dependencies": {
+        "lil-gui": "^0.21.0"
+    },
     "peerDependencies": {
         "@mux/mux-player": ">=3.0.0"
     },
