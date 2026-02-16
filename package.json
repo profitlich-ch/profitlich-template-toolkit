@@ -1,6 +1,6 @@
 {
     "name": "profitlich-template-toolkit",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Shared SCSS layout system, JS utilities and components for profitlich template repos",
     "type": "module",
     "exports": {
@@ -16,6 +16,7 @@
         "./components/mux-player/MuxPlayer": "./components/mux-player/MuxPlayer.js"
     },
     "files": [
+        "dev/",
         "scss/",
         "utils/",
         "components/"
