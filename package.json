@@ -1,7 +1,7 @@
 {
     "name": "profitlich-template-toolkit",
-    "version": "0.4.5",
-    "description": "Shared SCSS layout system, JS utilities and components for profitlich template repos",
+    "version": "0.5.0",
+    "description": "Shared SCSS layout system, JS utilities, components and build scripts for profitlich template repos",
     "type": "module",
     "exports": {
         "./dev": "./dev/Dev.js",
@@ -14,15 +14,24 @@
         "./utils/Vh100": "./utils/Vh100.js",
         "./utils/BodyScrolled": "./utils/BodyScrolled.js",
         "./components/menu-toggle/MenuToggle": "./components/menu-toggle/MenuToggle.js",
-        "./components/mux-player/MuxPlayer": "./components/mux-player/MuxPlayer.js"
+        "./components/mux-player/MuxPlayer": "./components/mux-player/MuxPlayer.js",
+        "./scripts/copy-files": "./scripts/copy-files.js",
+        "./scripts/deploy": "./scripts/deploy.js"
     },
     "files": [
         "dev/",
         "scss/",
         "utils/",
-        "components/"
+        "components/",
+        "scripts/"
     ],
     "dependencies": {
+        "basic-ftp": "^5.0.0",
+        "chokidar": "^4.0.0",
+        "cli-progress": "^3.12.0",
+        "dotenv": "^17.0.0",
+        "fs-extra": "^11.3.0",
+        "glob": "^11.0.0",
         "lil-gui": "^0.21.0"
     },
     "peerDependencies": {
