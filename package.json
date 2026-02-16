@@ -1,0 +1,34 @@
+{
+    "name": "profitlich-template-toolkit",
+    "version": "1.0.0",
+    "description": "Shared SCSS layout system, JS utilities and components for profitlich template repos",
+    "type": "module",
+    "exports": {
+        "./scss/core/layout": "./scss/core/layout.scss",
+        "./scss/core/mediaqueries": "./scss/core/mediaqueries.scss",
+        "./scss/core/hamburger": "./scss/core/hamburger.scss",
+        "./utils/MediaQueries": "./utils/MediaQueries.js",
+        "./utils/Vh100": "./utils/Vh100.js",
+        "./utils/BodyScrolled": "./utils/BodyScrolled.js",
+        "./components/menu-toggle/MenuToggle": "./components/menu-toggle/MenuToggle.js",
+        "./components/mux-player/MuxPlayer": "./components/mux-player/MuxPlayer.js"
+    },
+    "files": [
+        "scss/",
+        "utils/",
+        "components/"
+    ],
+    "peerDependencies": {
+        "@mux/mux-player": ">=3.0.0"
+    },
+    "peerDependenciesMeta": {
+        "@mux/mux-player": {
+            "optional": true
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/profitlich-ch/profitlich-template-toolkit"
+    },
+    "license": "MIT"
+}

@@ -1,0 +1,56 @@
+/**Media queries
+ * https://kinsta.com/blog/javamediaqueryipt-media-query/
+ * option 3 on the linked page
+ */
+
+export class MediaQueries {
+    static #instance;
+    layout = 'desktop';
+    #breakpoints;
+
+    constructor(breakpoints) {
+        this.#breakpoints = breakpoints;
+        this.layout = 'desktop';
+        this.changeLayout();
+        this.#matchmedia();
+    }
+
+    static getInstance(breakpoints) {
+        if (!MediaQueries.#instance) {
+            if (!breakpoints) {
+                throw new Error("MediaQueries muss beim ersten Aufruf mit breakpoints initialisiert werden.");
+            }
+            MediaQueries.#instance = new MediaQueries(breakpoints);
+        }
+        return MediaQueries.#instance;
+    }
+
+    #matchmedia() {
+        for (let [layout, minSize] of Object.entries(this.#breakpoints)) {
+            if (minSize) {
+                var matchmedia = window.matchMedia('(min-width: ' + minSize + 'px)');
+                matchmedia.addEventListener('change', (e) => this.changeLayout());
+            }
+        }
+    }
+
+    // media query handler function
+    changeLayout() {
+        for (let [layout, minSize] of Object.entries(this.#breakpoints)) {
+            var matchmedia = window.matchMedia('(min-width: ' + minSize + 'px)');
+            if (!matchmedia || matchmedia.matches) {
+                this.layout = layout;
+            }
+        }
+        document.body.setAttribute('data-layout', this.layout);
+
+        // create event
+        let event = new CustomEvent('eventLayoutchange', {
+            detail: {
+                layout: this.layout
+            }
+        });
+        // dispatch the event
+        window.dispatchEvent(event);
+    }
+}
