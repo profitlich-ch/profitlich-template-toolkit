@@ -227,12 +227,12 @@ $mediaqueries: (
         #{$mode}-top: $top;
     }
     @if $position == right {
-        #{$mode}-right: $right;
+        #{$mode}-right: $top;
     }
     @if $position == bottom {
-        #{$mode}-bottom: $bottom;
+        #{$mode}-bottom: $top;
     }
     @if $position == left {
-        #{$mode}-left: $left;
+        #{$mode}-left: $top;
     }
 }
