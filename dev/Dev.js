@@ -1,18 +1,19 @@
 import { Toolbar } from './toolbar/Toolbar.js';
+import { FormieFillIn } from './formie-fill-in/FormieFillIn.js';
 
-class Dev {
-    devToolbar;
+let _config = {};
 
-    constructor() {
-        this.devToolbar = new Toolbar();
-        console.info('Dev initialized.');
-    }
+/**
+* @param {Object} config - Aus config.json des Projekts
+ */
+export function initDev(config = {}) {
+    _config = config;
 }
 
-let dev;
-
 document.addEventListener('DOMContentLoaded', () => {
-    dev = new Dev();
+    new Toolbar();
+    if (_config.formie) {
+        new FormieFillIn(_config.formie);
+    }
+    console.info('Dev initialized.');
 });
-
-export { dev };
