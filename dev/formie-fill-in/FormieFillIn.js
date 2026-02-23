@@ -1,10 +1,7 @@
 /**
  * FormieFillIn – Füllt Formie-Formulare in der Entwicklungsumgebung automatisch aus.
  *
- * Initialisierung im Projekt-Dev-Script:
- *   import config from '../config.json';
- *   import { FormieFillIn } from 'profitlich-template-toolkit/dev/formie-fill-in/FormieFillIn';
- *   new FormieFillIn(config.formie);
+ * Initialisierung via initDev() in dev/Dev.js – kein manueller Aufruf nötig.
  *
  * Konfiguration in config.json (zwei Ebenen: Form-Handle → Feld-Handle → Wert):
  *   "formie": {
@@ -28,25 +25,18 @@ export class FormieFillIn {
         document.addEventListener('onFormieInit', this.#onFormieInit);
     }
 
-    #onFormieInit = () => {
-        const forms = document.querySelectorAll('form[data-fui-form]');
-        forms.forEach((formElement) => {
-            const handle = this.#getFormHandle(formElement);
-            if (!handle || !this.#formConfig[handle]) return;
+    #onFormieInit = (e) => {
+        const Formie = e.detail?.formie;
+        if (!Formie) return;
 
-            this.#fillForm(formElement, this.#formConfig[handle]);
+        for (const [handle, fields] of Object.entries(this.#formConfig)) {
+            const form = Formie.getFormByHandle(handle);
+            if (!form?.$form) continue;
+
+            this.#fillForm(form.$form, fields);
             console.info(`FormieFillIn: "${handle}" ausgefüllt.`);
-        });
-    };
-
-    #getFormHandle(formElement) {
-        try {
-            const data = JSON.parse(formElement.getAttribute('data-fui-form'));
-            return data?.handle ?? null;
-        } catch {
-            return null;
         }
-    }
+    };
 
     #fillForm(formElement, fields) {
         for (const [fieldHandle, value] of Object.entries(fields)) {

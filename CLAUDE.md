@@ -1,6 +1,6 @@
 # CLAUDE.md – Entwicklungskonventionen
 
-Zwei Template-Projekte teilen sich `profitlich-template-toolkit` als npm-Paket für SCSS, JS-Utilities und Build-Skripte. Dieses Repo: Craft CMS. Schwester-Repo: `template-kirbycms` mit Kirby. Toolkit lokal unter `~/Profitlich/F Lokal/profitlich-template-toolkit`.
+Zwei Template-Projekte teilen sich `@profitlich/template-toolkit` als npm-Paket für SCSS, JS-Utilities und Build-Skripte. Dieses Repo: Craft CMS. Schwester-Repo: `template-kirbycms` mit Kirby. Toolkit lokal unter `~/Profitlich/F Lokal/profitlich-template-toolkit`.
 
 ## Stack
 
