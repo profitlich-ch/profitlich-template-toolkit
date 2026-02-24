@@ -1,5 +1,4 @@
 import { Toolbar } from './toolbar/Toolbar.js';
-import { FormieFillIn } from './formie-fill-in/FormieFillIn.js';
 
 let _config = {};
 
@@ -12,8 +11,5 @@ export function initDev(config = {}) {
 
 document.addEventListener('DOMContentLoaded', () => {
     new Toolbar();
-    if (_config.formie) {
-        new FormieFillIn(_config.formie);
-    }
     console.info('Dev initialized.');
 });
