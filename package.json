@@ -1,6 +1,6 @@
 {
     "name": "@profitlich/template-toolkit",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "Shared SCSS layout system, JS utilities, components and build scripts for profitlich template repos",
     "type": "module",
     "exports": {
@@ -12,6 +12,7 @@
         "./scss/core/mediaqueries": "./scss/core/mediaqueries.scss",
         "./scss/core/hamburger": "./scss/core/hamburger.scss",
         "./utils/MediaQueries": "./utils/MediaQueries.js",
+        "./utils/MailAdresses": "./utils/MailAdresses.js",
         "./utils/Vh100": "./utils/Vh100.js",
         "./utils/BodyScrolled": "./utils/BodyScrolled.js",
         "./components/menu-toggle/MenuToggle": "./components/menu-toggle/MenuToggle.js",
