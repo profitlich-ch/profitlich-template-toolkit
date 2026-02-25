@@ -1,4 +1,4 @@
-export class MailAddresses {
+export class MailAdresses {
     static #instance;
 
     #domain;
@@ -19,9 +19,9 @@ export class MailAddresses {
     }
 
     static getInstance(domain) {
-        if (!MailAddresses.#instance) {
-            MailAddresses.#instance = new MailAddresses(domain);
+        if (!MailAdresses.#instance) {
+            MailAdresses.#instance = new MailAdresses(domain);
         }
-        return MailAddresses.#instance;
+        return MailAdresses.#instance;
     }
 }
