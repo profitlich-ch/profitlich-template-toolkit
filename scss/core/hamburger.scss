@@ -59,7 +59,7 @@
         margin-top: calc($hamburger-line-width / -2);
         transition:
             transform $hamburger-turn-speed cubic-bezier(0.55, 0.055, 0.675, 0.19),
-            color $hamburger-color-timing;
+            background-color $hamburger-color-timing;
 
         &,
         &::before,
@@ -82,7 +82,7 @@
             transition:
                 top $hamburger-turn-speed $hamburger-compression-speed ease,
                 opacity $hamburger-turn-speed ease,
-                color $hamburger-color-timing;
+                background-color $hamburger-color-timing;
         }
 
         &::after {
@@ -90,7 +90,7 @@
             transition: 
                 bottom $hamburger-turn-speed $hamburger-compression-speed ease,
                 transform $hamburger-turn-speed cubic-bezier(0.55, 0.055, 0.675, 0.19),
-                color $hamburger-color-timing;
+                background-color $hamburger-color-timing;
         }
     }
 
