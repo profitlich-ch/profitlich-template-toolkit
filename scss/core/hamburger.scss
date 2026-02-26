@@ -58,11 +58,6 @@
         top: 50%;
         margin-top: calc($hamburger-line-width / -2);
 
-        // transition vor background-color im kompilierten CSS:
-        // Setzt transition-Wert *bevor* background-color durch den Multi-Selektor
-        // gesetzt wird. Dadurch wird background-color beim allerersten Setzen
-        // direkt (ohne Transition) übernommen – erst ab der zweiten Änderung
-        // läuft die Transition. Gleiches Verhalten für Element und Pseudoelemente.
         transition:
             transform $hamburger-turn-speed cubic-bezier(0.55, 0.055, 0.675, 0.19),
             background-color $hamburger-color-timing;
