@@ -10,6 +10,7 @@
     $hamburger-hover-opacity       : 1 !default;
     $hamburger-active-layer-color  : $hamburger-color-active !default;
     $hamburger-active-hover-opacity: $hamburger-hover-opacity !default;
+    $hamburger-color-timing: 0s;
     $hamburger-animation-timing: 0.195s;
     $hamburger-compression-speed: 0.12s;
     $hamburger-turn-speed: $hamburger-animation-timing - $hamburger-compression-speed;
@@ -21,9 +22,20 @@
     $hamburger-hover-filter       : opacity(50%) !default;
     $hamburger-active-hover-filter: $hamburger-hover-filter !default;
 
-
-    // padding: $hamburger-padding-y $hamburger-padding-x;
-
+    // Base styles (Normalize <button>)
+    display: block;
+    cursor: pointer;
+    transition-property: opacity, filter;
+    transition-duration: 0.15s;
+    transition-timing-function: linear;
+    font: inherit;
+    color: inherit;
+    text-transform: none;
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    overflow: visible;
+    line-height: 0;
 
     &:hover {
         @if $hamburger-hover-use-filter==true {
@@ -32,6 +44,54 @@
 
         @else {
             opacity: $hamburger-hover-opacity;
+        }
+    }
+
+    .hamburger-box {
+        width: $hamburger-breite;
+        height: calc($hamburger-line-width * 3 + $hamburger-line-gap * 2);
+        display: inline-block;
+        position: relative;
+    }
+
+    .hamburger-inner {
+        display: block;
+        top: 50%;
+        margin-top: calc($hamburger-line-width / -2);
+        transition:
+            transform $hamburger-turn-speed cubic-bezier(0.55, 0.055, 0.675, 0.19),
+            color $hamburger-color-timing;
+
+        &,
+        &::before,
+        &::after {
+            width: $hamburger-breite;
+            height: $hamburger-line-width;
+            background-color: $hamburger-color;
+            border-radius: $hamburger-layer-border-radius;
+            position: absolute;
+        }
+
+        &::before,
+        &::after {
+            content: "";
+            display: block;
+        }
+
+        &::before {
+            top: calc(($hamburger-line-gap + $hamburger-line-width) * -1);
+            transition:
+                top $hamburger-turn-speed $hamburger-compression-speed ease,
+                opacity $hamburger-turn-speed ease,
+                color $hamburger-color-timing;
+        }
+
+        &::after {
+            bottom: calc(($hamburger-line-gap + $hamburger-line-width) * -1);
+            transition: 
+                bottom $hamburger-turn-speed $hamburger-compression-speed ease,
+                transform $hamburger-turn-speed cubic-bezier(0.55, 0.055, 0.675, 0.19),
+                color $hamburger-color-timing;
         }
     }
 
@@ -52,100 +112,23 @@
             background-color: $hamburger-active-layer-color;
             transition: 0s $hamburger-compression-speed linear;
         }
-    }
 
-    .hamburger-box {
-        width: $hamburger-breite;
-        height: calc($hamburger-line-width * 3 + $hamburger-line-gap * 2);
-        display: inline-block;
-        position: relative;
-    }
-
-    .hamburger-inner {
-        display: block;
-        top: 50%;
-        margin-top: calc($hamburger-line-width / -2);
-
-        &,
-        &::before,
-        &::after {
-            width: $hamburger-breite;
-            height: $hamburger-line-width;
-            background-color: $hamburger-color;
-            border-radius: $hamburger-layer-border-radius;
-            position: absolute;
-            transition-property: transform;
-            transition-duration: 0.15s;
-            transition-timing-function: ease;
-        }
-
-        &::before,
-        &::after {
-            content: "";
-            display: block;
-        }
-
-        &::before {
-            top: calc(($hamburger-line-gap + $hamburger-line-width) * -1);
-        }
-
-        &::after {
-            bottom: calc(($hamburger-line-gap + $hamburger-line-width) * -1);
-        }
-    }
-
-
-
-    // Aus Basis
-    display: block;
-    cursor: pointer;
-
-    transition-property: opacity, filter;
-    transition-duration: 0.15s;
-    transition-timing-function: linear;
-
-    // Normalize (<button>)
-    font: inherit;
-    color: inherit;
-    text-transform: none;
-    background-color: transparent;
-    border: 0;
-    margin: 0;
-    overflow: visible;
-    line-height: 0;
-
-    .hamburger-inner {
-        transition-duration: $hamburger-turn-speed;
-        transition-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-
-        &::before {
-            transition: top $hamburger-turn-speed $hamburger-compression-speed ease,
-                opacity $hamburger-turn-speed ease;
-        }
-
-        &::after {
-            transition: bottom $hamburger-turn-speed $hamburger-compression-speed ease,
-                transform $hamburger-turn-speed cubic-bezier(0.55, 0.055, 0.675, 0.19);
-        }
-    }
-
-    body[data-menu-active='true'] & {
         .hamburger-inner {
-            transform: rotate(45deg);
-            transition-delay: $hamburger-compression-speed;
-            transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            transform: rotate(45deg) cubic-bezier(0.215, 0.61, 0.355, 1) $hamburger-compression-speed;
 
             &::before {
                 top: 0;
                 opacity: 0;
-                transition: top $hamburger-turn-speed ease,
+                transition:
+                    top $hamburger-turn-speed ease,
                     opacity $hamburger-turn-speed $hamburger-compression-speed ease;
             }
 
             &::after {
                 bottom: 0;
                 transform: rotate(-90deg);
-                transition: bottom $hamburger-turn-speed ease,
+                transition:
+                    bottom $hamburger-turn-speed ease,
                     transform $hamburger-turn-speed $hamburger-compression-speed cubic-bezier(0.215, 0.61, 0.355, 1);
             }
         }
