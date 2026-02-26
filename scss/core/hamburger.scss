@@ -1,4 +1,4 @@
-@mixin hamburger($hamburger-breite, $hamburger-hoehe, $hamburger-line-width, $hamburger-color, $hamburger-color-active, $hamburger-color-timing) {
+@mixin hamburger($hamburger-breite, $hamburger-hoehe, $hamburger-line-width, $hamburger-color, $hamburger-color-active, $hamburger-color-timing: 0s) {
 
     // Settings
     // ==================================================
@@ -10,7 +10,6 @@
     $hamburger-hover-opacity       : 1 !default;
     $hamburger-active-layer-color  : $hamburger-color-active !default;
     $hamburger-active-hover-opacity: $hamburger-hover-opacity !default;
-    $hamburger-color-timing: 0s;
     $hamburger-animation-timing: 0.195s;
     $hamburger-compression-speed: 0.12s;
     $hamburger-turn-speed: $hamburger-animation-timing - $hamburger-compression-speed;
