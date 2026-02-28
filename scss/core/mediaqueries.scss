@@ -30,11 +30,10 @@
             desktopTo: desktop,
             bigFrom: big,
         );
-        $layout: if(
-            map.has-key($_layout-alias, $mediaquery),
-            map.get($_layout-alias, $mediaquery),
-            $mediaquery
-        );
+        $layout: $mediaquery;
+        @if map.has-key($_layout-alias, $mediaquery) {
+                $layout: map.get($_layout-alias, $mediaquery);
+            }
         @content($layout);
     }
 }
