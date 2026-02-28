@@ -13,21 +13,41 @@
     // Wenn es keine $mediaquery in der map gibt, gebe einen Fehler aus
     @if not $queries {
         @error "No value could be retrieved from `#{$mediaquery}`. "
-        + "Please make sure it is defined in `$mediaqueries` map.";
+        +"Please make sure it is defined in `$mediaqueries` map.";
     }
 
     // Include the media mixin with $queries
+    // Für implizite breakpoints funktionieren die Funktionen wie size() nicht, daher müssen sie hier gesetzt werden
     @include media($queries) {
-        @content($mediaquery);
+        $_layout-alias: (
+            tabletFrom: tablet,
+            tabletTo: tablet,
+            tabletPortrait: tablet,
+            tabletPortraitFrom: tablet,
+            tabletLandscape: tablet,
+            tabletLandscapeFrom: tablet,
+            desktopFrom: desktop,
+            desktopTo: desktop,
+            bigFrom: big,
+        );
+        $layout: if(
+            map.has-key($_layout-alias, $mediaquery),
+            map.get($_layout-alias, $mediaquery),
+            $mediaquery
+        );
+        @content($layout);
     }
 }
 
 @mixin media($queries) {
+
     // Erst wenn alle mediaqueries geschachtelt geschrieben sind,
     // wird der @content ausgegeben
-    @if list.length($queries) == 0 {
+    @if list.length($queries)==0 {
         @content;
-    } @else {
+    }
+
+    @else {
         $first-key: list.nth(map.keys($queries), 1);
 
         // Schreibt nur die mediaquery, nicht den Inhalt

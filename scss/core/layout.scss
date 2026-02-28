@@ -195,9 +195,13 @@ $mediaqueries: (
 
 
 // Distance
-@mixin marginPadding($layout, $mode, $position, $top: 0, $right: 0, $bottom: 0, $left: 0) {
+@mixin marginPadding($layout, $mode, $position, $top: 0, $right: 0, $bottom: 0, $left: 0, $important: null) {
 
     // @include mode($layout, padding/margin, all/top/right/bottom/left, 0, 0, 0, 0)
+
+    @if $important == true {
+        $important: '!important';
+    }
 
     @if ( map.get(config.$units, $layout) == 'px' ) {
         $top: $top + px;
@@ -221,7 +225,7 @@ $mediaqueries: (
     }
 
     @if $position == all {
-        #{$mode}: $top $right $bottom $left;
+        #{$mode}: $top $right $bottom $left $important;
     }
     @if $position == top {
         #{$mode}-top: $top;
