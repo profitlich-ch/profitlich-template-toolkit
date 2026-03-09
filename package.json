@@ -1,6 +1,6 @@
 {
     "name": "@profitlich/template-toolkit",
-    "version": "2.6.0",
+    "version": "2.6.1",
     "description": "Shared SCSS layout system, JS utilities, components and build scripts for profitlich template repos",
     "type": "module",
     "exports": {
@@ -18,7 +18,7 @@
         "./utils/Vh100": "./utils/Vh100.js",
         "./scripts/copy-files": "./scripts/copy-files.js",
         "./scripts/deploy": "./scripts/deploy.js",
-        "./vite/jsonToScss": "./utils/jsonToScss.js"
+        "./vite/jsonToScss": "./vite/jsonToScss.js"
     },
     "files": [
         "dev/",
