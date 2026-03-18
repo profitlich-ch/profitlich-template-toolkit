@@ -24,6 +24,7 @@ async function createClient(accessOptions) {
     const client = new ftp.Client();
     client.ftp.verbose = false;
     await client.access(accessOptions);
+    client.ftp.socket.setKeepAlive(true, 10000);
     return client;
 }
 
@@ -38,34 +39,35 @@ export async function runDeploy(mode, uploadTasks, options = {}) {
         secure: true
     };
 
+    const mainClient = new ftp.Client();
+    mainClient.ftp.verbose = false;
     let activeProgressBar = null;
 
     try {
         console.log(`🚀 Starting deployment for: ${modeUpper}`);
 
+        await mainClient.access(accessOptions);
+        mainClient.ftp.socket.setKeepAlive(true, 10000);
+
         for (const task of uploadTasks) {
             console.log(`\nProcessing Task: ${task.name}`);
 
-            const mainClient = new ftp.Client();
-            mainClient.ftp.verbose = false;
+            const files = await glob(task.localPattern, {
+                nodir: true,
+                dot: true,
+                ignore: task.ignore
+            });
 
-            try {
-                await mainClient.access(accessOptions);
+            if (files.length === 0) {
+                console.log('No files found for this task.');
+                continue;
+            }
 
-                const files = await glob(task.localPattern, {
-                    nodir: true,
-                    dot: true,
-                    ignore: task.ignore
-                });
+            // Determine which files are newer than their remote counterparts
+            process.stdout.write(`  Checking ${files.length} files...`);
+            const filesToUpload = [];
 
-                if (files.length === 0) {
-                    console.log('No files found for this task.');
-                    continue;
-                }
-
-                // Determine which files are newer than their remote counterparts
-                process.stdout.write(`  Checking ${files.length} files...`);
-                const filesToUpload = [];
+            if (parallel <= 1) {
                 for (const file of files) {
                     const relativeFile = path.relative(task.localBase, file);
                     const remotePath = path.join(task.remoteDir, relativeFile).replace(/\\/g, '/');
@@ -73,64 +75,83 @@ export async function runDeploy(mode, uploadTasks, options = {}) {
                         filesToUpload.push({ file, remotePath });
                     }
                 }
-                process.stdout.write(` ${filesToUpload.length} changed.\n`);
-
-                if (filesToUpload.length === 0) {
-                    console.log('  All files are up to date, skipping.');
-                    continue;
-                }
-
-                const progressBar = new cliProgress.SingleBar({
-                    format: '  Upload |{bar}| {percentage}%   {value}/{total} files   {duration_formatted}',
-                    barCompleteChar: '█',
-                    barIncompleteChar: '░',
-                    hideCursor: true
-                });
-
-                activeProgressBar = progressBar;
-                progressBar.start(filesToUpload.length, 0);
-
-                if (parallel <= 1) {
-                    for (const { file, remotePath } of filesToUpload) {
-                        await mainClient.ensureDir(path.dirname(remotePath));
-                        await mainClient.uploadFrom(file, remotePath);
-                        progressBar.increment();
-                    }
-                } else {
-                    // Pre-create all required remote directories with the main client
-                    const uniqueDirs = [...new Set(filesToUpload.map(({ remotePath }) => path.dirname(remotePath)))];
-                    for (const dir of uniqueDirs) {
-                        await mainClient.ensureDir(dir);
-                    }
-
-                    // Spawn parallel worker connections
-                    const workerCount = Math.min(parallel, filesToUpload.length);
-                    const workers = await Promise.all(
-                        Array.from({ length: workerCount }, () => createClient(accessOptions))
-                    );
-
-                    const queue = [...filesToUpload];
-                    await Promise.all(workers.map(async (workerClient) => {
-                        try {
-                            while (true) {
-                                const item = queue.shift();
-                                if (!item) break;
-                                await workerClient.uploadFrom(item.file, item.remotePath);
-                                progressBar.increment();
+            } else {
+                const checkWorkerCount = Math.min(parallel, files.length);
+                const checkWorkers = await Promise.all(
+                    Array.from({ length: checkWorkerCount }, () => createClient(accessOptions))
+                );
+                const checkQueue = [...files];
+                await Promise.all(checkWorkers.map(async (workerClient) => {
+                    try {
+                        while (true) {
+                            const file = checkQueue.shift();
+                            if (!file) break;
+                            const relativeFile = path.relative(task.localBase, file);
+                            const remotePath = path.join(task.remoteDir, relativeFile).replace(/\\/g, '/');
+                            if (await isNewer(workerClient, file, remotePath)) {
+                                filesToUpload.push({ file, remotePath });
                             }
-                        } finally {
-                            workerClient.close();
                         }
-                    }));
+                    } finally {
+                        workerClient.close();
+                    }
+                }));
+            }
+
+            process.stdout.write(` ${filesToUpload.length} changed.\n`);
+
+            if (filesToUpload.length === 0) {
+                console.log('  All files are up to date, skipping.');
+                continue;
+            }
+
+            const progressBar = new cliProgress.SingleBar({
+                format: '  Upload |{bar}| {percentage}%   {value}/{total} files   {duration_formatted}',
+                barCompleteChar: '█',
+                barIncompleteChar: '░',
+                hideCursor: true
+            });
+
+            activeProgressBar = progressBar;
+            progressBar.start(filesToUpload.length, 0);
+
+            if (parallel <= 1) {
+                for (const { file, remotePath } of filesToUpload) {
+                    await mainClient.ensureDir(path.dirname(remotePath));
+                    await mainClient.uploadFrom(file, remotePath);
+                    progressBar.increment();
+                }
+            } else {
+                // Pre-create all required remote directories with the main client
+                const uniqueDirs = [...new Set(filesToUpload.map(({ remotePath }) => path.dirname(remotePath)))];
+                for (const dir of uniqueDirs) {
+                    await mainClient.ensureDir(dir);
                 }
 
-                activeProgressBar.stop();
-                activeProgressBar = null;
-                await delay(50);
+                // Spawn parallel worker connections
+                const workerCount = Math.min(parallel, filesToUpload.length);
+                const workers = await Promise.all(
+                    Array.from({ length: workerCount }, () => createClient(accessOptions))
+                );
 
-            } finally {
-                mainClient.close();
+                const queue = [...filesToUpload];
+                await Promise.all(workers.map(async (workerClient) => {
+                    try {
+                        while (true) {
+                            const item = queue.shift();
+                            if (!item) break;
+                            await workerClient.uploadFrom(item.file, item.remotePath);
+                            progressBar.increment();
+                        }
+                    } finally {
+                        workerClient.close();
+                    }
+                }));
             }
+
+            activeProgressBar.stop();
+            activeProgressBar = null;
+            await delay(50);
         }
 
         console.log('\n✅ Deployment completed successfully!');
@@ -140,6 +161,8 @@ export async function runDeploy(mode, uploadTasks, options = {}) {
             activeProgressBar.stop();
         }
         console.error('Deployment failed:', err);
+    } finally {
+        mainClient.close();
     }
 }
 
