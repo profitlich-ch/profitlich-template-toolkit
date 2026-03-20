@@ -28,7 +28,9 @@ export class ImagesLoaded {
         if (img.complete && img.naturalHeight > 0) {
             this.#signalLoaded(img);
         } else {
-            // Ansonsten auf das erfolgreiche Lade-Event warten
+            // Noch nicht geladenen Bildern Atrribut geben zum Ausblenden mit CSS
+            img.setAttribute(this.#attributeName, 'false');
+            // Auf das erfolgreiche Lade-Event warten
             img.addEventListener('load', () => this.#signalLoaded(img));
 
             // Fehlerbehandlung (optional)
