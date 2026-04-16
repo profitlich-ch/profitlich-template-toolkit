@@ -87,19 +87,14 @@ export class MuxPlayer {
                     player.setAttribute('data-autoplay', 'true');
                 }
 
-                player.setAttribute('data-playing', 'false');
+                const setPlaying = value => player.parentElement.setAttribute('data-playing', value);
 
-                player.addEventListener('playing', () => {
-                    player.setAttribute('data-playing', 'true');
-                });
-                player.addEventListener('pause', () => {
-                    player.setAttribute('data-playing', 'pause');
-                });
-                player.addEventListener('ended', () => {
-                    player.setAttribute('data-playing', 'ended');
-                });
+                player.addEventListener('playing', () => setPlaying('true'));
+                player.addEventListener('pause', () => setPlaying('pause'));
+                player.addEventListener('ended', () => setPlaying('ended'));
 
                 container.replaceWith(player);
+                setPlaying('false');
 
                 if (this.#onPlayerCreated) {
                     this.#onPlayerCreated(player, container);
