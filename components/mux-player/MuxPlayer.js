@@ -26,11 +26,24 @@ export class MuxPlayer {
     #loop;
     #noLowRes;
     #onPlayerCreated;
+    #disableTracking;
+    #envKey;
+    #metadata;
 
-    constructor({ loop = false, noLowRes = false, onPlayerCreated = null } = {}) {
+    constructor({
+        loop = false,
+        noLowRes = false,
+        onPlayerCreated = null,
+        disableTracking = false,
+        envKey = null,
+        metadata = null,
+    } = {}) {
         this.#loop = loop;
         this.#noLowRes = noLowRes;
         this.#onPlayerCreated = onPlayerCreated;
+        this.#disableTracking = disableTracking;
+        this.#envKey = envKey;
+        this.#metadata = metadata;
         this.#lazyLoadObserver = new IntersectionObserver(this.#handleLazyLoad.bind(this));
         this.#playPauseObserver = new IntersectionObserver(this.#handlePlayPause.bind(this));
     }
@@ -123,6 +136,15 @@ export class MuxPlayer {
                     player.setAttribute('data-autoplay', 'true');
                 } else {
                     player.setAttribute('data-autoplay', 'false');
+                }
+
+                if (this.#disableTracking) {
+                    player.setAttribute('disable-tracking', '');
+                } else if (this.#envKey) {
+                    player.setAttribute('env-key', this.#envKey);
+                    if (this.#metadata) {
+                        player.metadata = this.#metadata;
+                    }
                 }
 
                 const setStatus = value => player.setAttribute('data-status', value);
